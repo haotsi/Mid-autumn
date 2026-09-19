@@ -6,18 +6,18 @@ import {createMoonTexture} from './moon.js';
 import {createHomeTransition} from './camera-home.js';
 import {createWishLanterns} from './wish-lanterns.js';
 const host=document.querySelector('#scene');
-const loadingScreen=document.querySelector('#loading-screen'),loadingTitle=document.querySelector('#loading-title'),loadingDetail=document.querySelector('#loading-detail'),loadingBar=document.querySelector('#loading-progress-bar'),loadingPercent=document.querySelector('#loading-percent'),loadingTip=document.querySelector('#loading-tip'),loadingActions=document.querySelector('#loading-actions'),loadingRetry=document.querySelector('#loading-retry'),loadingLowPower=document.querySelector('#loading-low-power'),loadingHelp=document.querySelector('#loading-help');
-let loadingFinished=false,loadingFailed=false,loadingValue=0;
-function setLoading(value,detail,tip){loadingValue=Math.max(loadingValue,Math.min(100,value));loadingBar.style.width=`${loadingValue}%`;loadingPercent.textContent=`${Math.round(loadingValue)}%`;if(detail)loadingDetail.textContent=detail;if(tip)loadingTip.textContent=tip;}
-function showLoadingSlow(){if(loadingFinished||loadingFailed)return;loadingScreen.classList.add('loading-screen-slow');loadingActions.hidden=false;loadingLowPower.hidden=lowQuality;loadingHelp.hidden=false;loadingDetail.textContent='加载时间比预期久一些…';loadingTip.textContent=lowQuality?'当前已启用轻量显示，请保持页面打开':'请保持页面打开，或切换低画质继续';loadingHelp.textContent=lowQuality?'如果仍未完成，请检查网络后点击“重新加载”。':'如果网络较慢，请保持页面打开；也可以点击“低画质继续”减少手机渲染负担。';}
-function showLoadingError(message){loadingFailed=true;loadingScreen.classList.add('loading-screen-error');loadingTitle.textContent='北大楼还没有点亮';loadingDetail.textContent=message;loadingTip.textContent='请检查网络或本地预览地址';loadingActions.hidden=false;loadingLowPower.hidden=true;loadingHelp.hidden=false;loadingHelp.textContent='如果你使用的是本地预览，请确认页面通过 http://127.0.0.1:5173 打开。';}
+const loadingScreen=document.querySelector('#loading-screen'),loadingTitle=document.querySelector('#loading-title'),loadingDetail=document.querySelector('#loading-detail'),loadingBar=document.querySelector('#loading-progress-bar'),loadingPercent=document.querySelector('#loading-percent'),loadingTip=document.querySelector('#loading-tip'),loadingActions=document.querySelector('#loading-actions'),loadingRetry=document.querySelector('#loading-retry'),loadingHelp=document.querySelector('#loading-help');
+let loadingFinished=false,loadingFailed=false;
+function setLoading(value,detail,tip){const progress=Number.isFinite(value)?Math.max(0,Math.min(100,value)):0;loadingBar.style.width=`${progress}%`;loadingPercent.textContent=`${Math.round(progress)}%`;if(detail)loadingDetail.textContent=detail;if(tip)loadingTip.textContent=tip;}
+function showLoadingSlow(){if(loadingFinished||loadingFailed)return;loadingScreen.classList.add('loading-screen-slow');loadingActions.hidden=false;loadingHelp.hidden=false;loadingDetail.textContent='加载时间比预期久一些…';loadingTip.textContent='请保持页面打开，加载完成后会自动进入场景';loadingHelp.textContent='如果网络较慢，请保持页面打开；超过一段时间仍未完成时，可以点击“重新加载”。';}
+function showLoadingError(message){loadingFailed=true;loadingScreen.classList.add('loading-screen-error');loadingTitle.textContent='北大楼还没有点亮';loadingDetail.textContent=message;loadingTip.textContent='请检查网络或本地预览地址';loadingActions.hidden=false;loadingHelp.hidden=false;loadingHelp.textContent='如果你使用的是本地预览，请确认页面通过 http://127.0.0.1:5173 打开。';}
 function finishLoading(){if(loadingFinished)return;loadingFinished=true;clearTimeout(slowTimer);setLoading(100,'北大楼已点亮','欢迎来到中秋夜');loadingActions.hidden=true;loadingHelp.hidden=true;setTimeout(()=>loadingScreen.classList.add('loading-screen-done'),420);}
 const slowTimer=setTimeout(showLoadingSlow,8000);
 setLoading(8,'正在准备月光与庭院…','月光正在洒进北大楼');
 const scene=new T.Scene();scene.background=new T.Color('#0b1526');scene.fog=new T.FogExp2('#0b1526',.012);
-const mobile=matchMedia('(max-width:700px)').matches;let lowQuality=mobile||navigator.connection?.saveData===true;let renderer;
-try{renderer=new T.WebGLRenderer({antialias:!lowQuality,powerPreference:'high-performance'});}catch(error){showLoadingError('无法启动 3D，请开启浏览器硬件加速后刷新。');console.error(error);throw error;}
-renderer.setPixelRatio(Math.min(devicePixelRatio,lowQuality?1.25:1.8));renderer.setSize(innerWidth,innerHeight);renderer.outputColorSpace=T.SRGBColorSpace;renderer.shadowMap.enabled=!lowQuality;renderer.shadowMap.type=T.PCFSoftShadowMap;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.14;host.append(renderer.domElement);setLoading(20,'正在准备渲染环境…',lowQuality?'检测到移动设备，已启用轻量显示':'正在校准月色与灯火');
+let renderer;
+try{renderer=new T.WebGLRenderer({antialias:true,powerPreference:'high-performance'});}catch(error){showLoadingError('无法启动 3D，请开启浏览器硬件加速后刷新。');console.error(error);throw error;}
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.8));renderer.setSize(innerWidth,innerHeight);renderer.outputColorSpace=T.SRGBColorSpace;renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.14;host.append(renderer.domElement);setLoading(20,'正在准备渲染环境…','正在校准月色与灯火');
 const camera=new T.PerspectiveCamera(39,innerWidth/innerHeight,.1,180);
 const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.maxPolarAngle=Math.PI/2-.035;controls.minDistance=10;controls.maxDistance=49;controls.enablePan=false;
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -27,10 +27,9 @@ homeTransition.reset(innerWidth,true);
 scene.add(new T.AmbientLight('#7186a1',.5));
 scene.add(new T.HemisphereLight('#b8c9e7','#3a3029',1.3));
 const moonlight=new T.DirectionalLight('#b8c9ed',1.08);moonlight.position.set(-10,22,10);scene.add(moonlight);
-const key=new T.DirectionalLight('#ffd09a',1.48);key.position.set(5,15,18);key.castShadow=!lowQuality;key.shadow.mapSize.set(lowQuality?1024:2048,lowQuality?1024:2048);key.shadow.radius=5;key.shadow.blurSamples=8;Object.assign(key.shadow.camera,{left:-18,right:18,top:18,bottom:-18,far:65});key.shadow.bias=-.0005;scene.add(key);
+const key=new T.DirectionalLight('#ffd09a',1.48);key.position.set(5,15,18);key.castShadow=true;key.shadow.mapSize.set(2048,2048);key.shadow.radius=5;key.shadow.blurSamples=8;Object.assign(key.shadow.camera,{left:-18,right:18,top:18,bottom:-18,far:65});key.shadow.bias=-.0005;scene.add(key);
 const fill=new T.DirectionalLight('#7190b8',.36);fill.position.set(-16,9,-14);scene.add(fill);
-function enableLowQuality(){lowQuality=true;renderer.setPixelRatio(Math.min(devicePixelRatio,1.15));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=false;key.castShadow=false;loadingLowPower.disabled=true;loadingDetail.textContent='已切换轻量模式，继续加载…';loadingTip.textContent='已减少阴影与渲染负担';}
-loadingRetry.addEventListener('click',()=>location.reload());loadingLowPower.addEventListener('click',enableLowQuality);
+loadingRetry.addEventListener('click',()=>location.reload());
 function mat(color,extra={}){return new T.MeshStandardMaterial({color,roughness:.85,...extra});}
 function mesh(geo,material,pos,parent=scene){const m=new T.Mesh(geo,material);m.position.set(...pos);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;}
 const stone=mat('#687479'),gold=mat('#bb8741',{metalness:.35}),wood=mat('#4b3023');
@@ -39,7 +38,7 @@ mesh(new T.CylinderGeometry(12.1,12.2,.12,96),mat('#5e6964'),[0,-.045,0]);
 mesh(new T.PlaneGeometry(240,240),mat('#172635'),[0,-.68,0]).rotation.x=-Math.PI/2;
 for(let z=4;z<11;z+=.85)for(let x=-1.8;x<=1.8;x+=.92)mesh(new T.BoxGeometry(.85,.045,.77),stone,[x,.045,z]);
 setLoading(32,'正在加载北大楼模型…','模型文件正在从本地读取');
-new GLTFLoader().load('./assets/north-building.glb',g=>{g.scene.traverse(o=>{if(o.isMesh){o.castShadow=!lowQuality;o.receiveShadow=true;}});scene.add(g.scene);finishLoading();},xhr=>{if(xhr.total){const ratio=xhr.loaded/xhr.total;setLoading(34+ratio*60,`正在加载北大楼模型… ${Math.round(ratio*100)}%`,ratio>.72?'楼体即将完成，正在点亮庭院':'正在接收模型文件');}else setLoading(52,'正在接收北大楼模型…','模型大小暂时无法估算，请稍候');},error=>{showLoadingError('北大楼模型加载失败，场景暂时无法完整显示。');console.error(error);});
+new GLTFLoader().load('./assets/north-building.glb',g=>{g.scene.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});scene.add(g.scene);finishLoading();},xhr=>{if(xhr.total){const ratio=Math.max(0,Math.min(1,xhr.loaded/xhr.total));setLoading(34+ratio*60,`正在加载北大楼模型… ${Math.round(ratio*100)}%`,ratio>.72?'楼体即将完成，正在点亮庭院':'正在接收模型文件');}else setLoading(52,'正在接收北大楼模型…','模型大小暂时无法估算，请稍候');},error=>{showLoadingError('北大楼模型加载失败，场景暂时无法完整显示。');console.error(error);});
 // The moon is a distant billboard texture, so it reads as sky scenery instead of a nearby 3D prop.
 const moon=new T.Sprite(new T.SpriteMaterial({map:createMoonTexture(),transparent:true,depthWrite:false,fog:false,toneMapped:false}));
 moon.position.set(0,17,-24);moon.scale.set(7.2,7.2,1);scene.add(moon);
