@@ -2,11 +2,13 @@ import * as T from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {buildCourtyard} from './courtyard.js';
+import {buildForecourt} from './forecourt.js';
 import {createMoonTexture} from './moon.js';
 import {createHomeTransition} from './camera-home.js';
 import {createWishLanterns} from './wish-lanterns.js';
 const host=document.querySelector('#scene');
-const loadingScreen=document.querySelector('#loading-screen'),loadingTitle=document.querySelector('#loading-title'),loadingDetail=document.querySelector('#loading-detail'),loadingBar=document.querySelector('#loading-progress-bar'),loadingPercent=document.querySelector('#loading-percent'),loadingTip=document.querySelector('#loading-tip'),loadingActions=document.querySelector('#loading-actions'),loadingRetry=document.querySelector('#loading-retry'),loadingHelp=document.querySelector('#loading-help');
+const loadingScreen=document.querySelector('#loading-screen'),loadingTitle=document.querySelector('#loading-title'),loadingDetail=document.querySelector('#loading-detail'),loadingBar=document.querySelector('#loading-progress-bar'),loadingPercent=document.querySelector('#loading-percent'),loadingTip=document.querySelector('#loading-tip'),loadingDeviceTip=document.querySelector('#loading-device-tip'),loadingActions=document.querySelector('#loading-actions'),loadingRetry=document.querySelector('#loading-retry'),loadingHelp=document.querySelector('#loading-help');
+const mobile=matchMedia('(max-width:700px)').matches;
 let loadingFinished=false,loadingFailed=false;
 function setLoading(value,detail,tip){const progress=Number.isFinite(value)?Math.max(0,Math.min(100,value)):0;loadingBar.style.width=`${progress}%`;loadingPercent.textContent=`${Math.round(progress)}%`;if(detail)loadingDetail.textContent=detail;if(tip)loadingTip.textContent=tip;}
 function showLoadingSlow(){if(loadingFinished||loadingFailed)return;loadingScreen.classList.add('loading-screen-slow');loadingActions.hidden=false;loadingHelp.hidden=false;loadingDetail.textContent='加载时间比预期久一些…';loadingTip.textContent='请保持页面打开，加载完成后会自动进入场景';loadingHelp.textContent='如果网络较慢，请保持页面打开；超过一段时间仍未完成时，可以点击“重新加载”。';}
@@ -14,6 +16,7 @@ function showLoadingError(message){loadingFailed=true;loadingScreen.classList.ad
 function finishLoading(){if(loadingFinished)return;loadingFinished=true;clearTimeout(slowTimer);setLoading(100,'北大楼已点亮','欢迎来到中秋夜');loadingActions.hidden=true;loadingHelp.hidden=true;setTimeout(()=>loadingScreen.classList.add('loading-screen-done'),420);}
 const slowTimer=setTimeout(showLoadingSlow,8000);
 setLoading(8,'正在准备月光与庭院…','月光正在洒进北大楼');
+loadingDeviceTip.hidden=!mobile;
 const scene=new T.Scene();scene.background=new T.Color('#0b1526');scene.fog=new T.FogExp2('#0b1526',.012);
 let renderer;
 try{renderer=new T.WebGLRenderer({antialias:true,powerPreference:'high-performance'});}catch(error){showLoadingError('无法启动 3D，请开启浏览器硬件加速后刷新。');console.error(error);throw error;}
@@ -33,10 +36,7 @@ loadingRetry.addEventListener('click',()=>location.reload());
 function mat(color,extra={}){return new T.MeshStandardMaterial({color,roughness:.85,...extra});}
 function mesh(geo,material,pos,parent=scene){const m=new T.Mesh(geo,material);m.position.set(...pos);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;}
 const stone=mat('#687479'),gold=mat('#bb8741',{metalness:.35}),wood=mat('#4b3023');
-mesh(new T.CylinderGeometry(12.4,12.8,.55,96),mat('#485b58'),[0,-.38,0]);
-mesh(new T.CylinderGeometry(12.1,12.2,.12,96),mat('#5e6964'),[0,-.045,0]);
-mesh(new T.PlaneGeometry(240,240),mat('#172635'),[0,-.68,0]).rotation.x=-Math.PI/2;
-for(let z=4;z<11;z+=.85)for(let x=-1.8;x<=1.8;x+=.92)mesh(new T.BoxGeometry(.85,.045,.77),stone,[x,.045,z]);
+buildForecourt(scene);
 setLoading(32,'正在加载北大楼模型…','模型文件正在从本地读取');
 new GLTFLoader().load('./assets/north-building.glb',g=>{g.scene.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});scene.add(g.scene);finishLoading();},xhr=>{if(xhr.total){const ratio=Math.max(0,Math.min(1,xhr.loaded/xhr.total));setLoading(34+ratio*60,`正在加载北大楼模型… ${Math.round(ratio*100)}%`,ratio>.72?'楼体即将完成，正在点亮庭院':'正在接收模型文件');}else setLoading(52,'正在接收北大楼模型…','模型大小暂时无法估算，请稍候');},error=>{showLoadingError('北大楼模型加载失败，场景暂时无法完整显示。');console.error(error);});
 // The moon is a distant billboard texture, so it reads as sky scenery instead of a nearby 3D prop.
@@ -51,7 +51,7 @@ const starPos=[];for(let i=0;i<400;i++)starPos.push((random()-.5)*150,12+random(
 const {lanterns,warmLights,clickable}=buildCourtyard(scene);clickable.push(moon);
 const wishFlight=createWishLanterns(scene,glow,reduced);
 // Osmanthus trees frame the courtyard.
-for(const [x,z] of [[-9,1],[9,-1]]){
+for(const [x,z] of [[-12.8,-1],[12.8,-2]]){
   mesh(new T.CylinderGeometry(.12,.22,2.5,16),wood,[x,1.25,z]);
   const bed=mesh(new T.TorusGeometry(1.35,.065,10,64),stone,[x,.045,z]);bed.rotation.x=Math.PI/2;
   mesh(new T.CylinderGeometry(1.3,1.3,.025,48),mat('#303b2b'),[x,.028,z]);

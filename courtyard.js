@@ -34,7 +34,7 @@ export function buildCourtyard(scene) {
     const light=new T.PointLight('#ffac59',2.2,3,2);light.position.set(0,-.44,0);pivot.add(light);
     pivot.userData.bodyMaterial=bodyMaterial;warmLights.push(light);lanterns.push(pivot);
   }
-  for(const x of [-3.1,3.1])for(const z of [4.5,7.1,9.5]){
+  for(const x of [-2.15,2.15])for(const z of [4.5,9,13.5]){
     const inward=x>0?-1:1,hook=x+inward*.34;
     add(new T.CylinderGeometry(.16,.2,.13,24),stone,[x,.08,z]);
     add(new T.CylinderGeometry(.048,.067,1.83,16),timber,[x,1.0,z]);
@@ -46,7 +46,7 @@ export function buildCourtyard(scene) {
   }
 
   // Tea table: 1.15 m diameter, 0.76 m high. Chairs: 0.44 m seat height.
-  const tea=new T.Group();tea.position.set(4.8,.018,6.4);scene.add(tea);
+  const tea=new T.Group();tea.position.set(11.9,.018,5.6);scene.add(tea);
   add(new T.CylinderGeometry(.575,.575,.045,64),timber,[0,.38,0],tea);
   ring(.565,.012,.394,brass,tea);
   lathe([[.47,0],[.48,.015],[.48,.07],[.46,.08]],timber,[0,.277,0],tea);
