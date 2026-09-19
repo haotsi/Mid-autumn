@@ -3,16 +3,23 @@
 以南京大学北大楼为主景的中秋主题 3D 场景。夜色、满月、灯笼、桂花树和茶席共同组成一幅校园赏月画面。
 
 ## 运行
+### Windows 一键运行
+需要 Node.js 18 或更高版本。双击项目根目录的 `start.bat`，它会启动本地服务并打开预览页面。
+
 ### 本地运行
-需要 Node.js 18 或更高版本。项目依赖已经放在仓库中，不需要联网安装 npm 包。
+项目依赖已经放在仓库中，不需要联网安装 npm 包。
 
 ```powershell
 npm start
 ```
 
 然后访问 <http://127.0.0.1:5173>。请通过本地服务访问页面，不要直接双击 `index.html`，否则浏览器可能限制模块和 GLB 模型的读取。
-### GitHub托管网址
-[月满金陵 · 北大楼中秋夜](https://haotsi.github.io/Mid-autumn/)  （若不稳定可检查网络状态或尝试本地运行方案）
+
+如果误双击了 `index.html`，页面会显示本地运行指引。请启动 `start.bat` 或在终端执行 `npm start`。
+### GitHub 托管网址
+[打开月满金陵 · 北大楼中秋夜](https://haotsi.github.io/Mid-autumn/)
+
+如果误双击了 `index.html`，页面也会提供这个在线版本入口。GitHub Pages 通过 `https://` 访问时不会显示本地运行指引，也不会改变正常的场景交互。
 ## 交互
 
 - 拖动场景：环绕北大楼观察
@@ -35,11 +42,14 @@ npm start
 assets/north-building.glb  北大楼 3D 模型
 app.js                    场景入口、灯光、相机和交互
 courtyard.js              灯笼、茶席、桌椅和桂花庭院
+forecourt.js              参考校园前坪关系的矩形草坪和中轴铺装
 moon.js                   本地生成的月面纹理
 camera-home.js            归位动画
+wish-lanterns.js          祈愿灯建模、放飞动画和心愿查看
 index.html                页面结构
 style.css                 页面视觉样式
 server.mjs                轻量本地静态服务器
+start.bat                 Windows 一键启动脚本
 vendor/                   本地 Three.js 运行文件
 ```
 

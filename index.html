@@ -1,3 +1,69 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>月满金陵 · 北大楼中秋夜</title><link rel="stylesheet" href="style.css"><script type="importmap">{"imports":{"three":"./vendor/build/three.module.js","three/addons/":"./vendor/addons/"}}</script></head>
-<body><main><div id="scene" aria-label="可旋转的北大楼中秋三维场景"></div><div class="vignette"></div><header><a class="brand" href="#" aria-label="回到初始视角"><span class="seal">金陵</span><span>北大楼 · 中秋夜<br><small>A MOONLIT CAMPUS</small></span></a><span class="edition">丙午年 · 八月十五</span></header><section class="intro"><div class="eyebrow">MID-AUTUMN &nbsp; / &nbsp; 2026</div><h1>月满金陵<span>此刻，共团圆。</span></h1><p>一轮月，一盏灯，一院桂花香。<br>在北大楼下，把思念交给月光。</p><div class="hairline"></div><span class="poem">海上生明月 · 天涯共此时</span></section><section id="loading-screen" role="status" aria-live="polite"><div class="loading-card"><div class="loading-seal">月</div><div class="eyebrow">A MOONLIT CAMPUS</div><h2 id="loading-title">正在点亮北大楼</h2><p id="loading-detail">正在准备月光与庭院，请稍候…</p><div class="loading-progress" aria-hidden="true"><span id="loading-progress-bar"></span></div><div class="loading-meta"><span id="loading-percent">0%</span><span id="loading-tip">月光正在洒进北大楼</span></div><p id="loading-device-tip" class="loading-device-tip" hidden>手机正在铺开北大楼的中秋夜景，首次加载会稍慢；想更流畅地环绕赏景，建议使用电脑打开。</p><div id="loading-actions" class="loading-actions" hidden><button id="loading-retry" type="button">重新加载</button></div><p id="loading-help" class="loading-help" hidden>如果网络较慢，请保持页面打开；超过一段时间仍未完成时，可以点击“重新加载”。</p></div></section><div id="blessing" role="status"></div><section id="wish-panel" class="wish-panel" hidden aria-labelledby="wish-title"><div class="wish-card"><button id="wish-close" class="wish-close" type="button" aria-label="关闭祈愿灯面板">×</button><div class="eyebrow">A WISH UNDER THE MOON</div><h2 id="wish-title">把心愿交给月光</h2><p>写下一句话，让它化作一盏灯，慢慢升到月亮身边。</p><form id="wish-form"><label for="wish-input">你的心愿</label><textarea id="wish-input" maxlength="42" rows="3" placeholder="愿家人平安，愿所行皆有光……" required></textarea><div class="wish-form-footer"><span id="wish-count">0 / 42</span><button type="submit">点亮祈愿灯 ↗</button></div></form><div id="wish-log" class="wish-log" aria-live="polite"></div></div></section><footer><div class="caption"><span class="dot"></span> 南京大学 · 北大楼 <small>拖动环绕 / 滚轮缩放 / 轻点灯笼与月亮</small></div><div class="controls"><button id="mood" aria-pressed="true">◉ 灯火夜景</button><button id="reset">↺ 归位</button><button id="wish">写下心愿 ↗</button></div></footer></main><script type="module" src="app.js"></script></body></html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>月满金陵 · 北大楼中秋夜</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="importmap">{"imports":{"three":"./vendor/build/three.module.js","three/addons/":"./vendor/addons/"}}</script>
+</head>
+<body>
+  <main>
+    <div id="scene" aria-label="可旋转的北大楼中秋三维场景"></div>
+    <div class="vignette"></div>
+    <header>
+      <a class="brand" href="#" aria-label="回到初始视角"><span class="seal">金陵</span><span>北大楼 · 中秋夜<br><small>A MOONLIT CAMPUS</small></span></a>
+      <span class="edition">丙午年 · 八月十五</span>
+    </header>
+    <section class="intro">
+      <div class="eyebrow">MID-AUTUMN &nbsp; / &nbsp; 2026</div>
+      <h1>月满金陵<span>此刻，共团圆。</span></h1>
+      <p>一轮月，一盏灯，一院桂花香。<br>在北大楼下，把思念交给月光。</p>
+      <div class="hairline"></div>
+      <span class="poem">海上生明月 · 天涯共此时</span>
+    </section>
+    <section id="loading-screen" role="status" aria-live="polite">
+      <div class="loading-card">
+        <div class="loading-seal">月</div>
+        <div class="eyebrow">A MOONLIT CAMPUS</div>
+        <h2 id="loading-title">正在点亮北大楼</h2>
+        <p id="loading-detail">正在准备月光与庭院，请稍候…</p>
+        <div class="loading-progress" aria-hidden="true"><span id="loading-progress-bar"></span></div>
+        <div class="loading-meta"><span id="loading-percent">0%</span><span id="loading-tip">月光正在洒进北大楼</span></div>
+        <p id="loading-device-tip" class="loading-device-tip" hidden>手机正在铺开北大楼的中秋夜景，首次加载会稍慢；想更流畅地环绕赏景，建议使用电脑打开。</p>
+        <div id="loading-actions" class="loading-actions" hidden><button id="loading-retry" type="button">重新加载</button></div>
+        <p id="loading-help" class="loading-help" hidden>如果网络较慢，请保持页面打开；超过一段时间仍未完成时，可以点击“重新加载”。</p>
+      </div>
+    </section>
+    <section id="file-run-guide" class="file-run-guide" hidden aria-labelledby="file-run-title">
+      <div class="file-run-card">
+        <div class="loading-seal">月</div>
+        <div class="eyebrow">LOCAL PREVIEW REQUIRED</div>
+        <h2 id="file-run-title">请先点亮本地夜景</h2>
+        <p>这个中秋场景需要通过本地服务读取模型和模块，直接双击 <code>index.html</code> 无法完整打开。</p>
+        <ol>
+          <li>在项目文件夹打开终端</li>
+          <li>执行 <code>npm start</code></li>
+          <li>访问 <code>http://127.0.0.1:5173/</code></li>
+        </ol>
+        <p class="file-run-note">也可以双击项目里的 <code>start.bat</code> 一键启动。</p>
+        <a class="file-run-link" href="https://haotsi.github.io/Mid-autumn/" target="_blank" rel="noopener">打开 GitHub 托管版本 ↗</a>
+      </div>
+    </section>
+    <div id="blessing" role="status"></div>
+    <section id="wish-panel" class="wish-panel" hidden aria-labelledby="wish-title"><div class="wish-card"><button id="wish-close" class="wish-close" type="button" aria-label="关闭祈愿灯面板">×</button><div class="eyebrow">A WISH UNDER THE MOON</div><h2 id="wish-title">把心愿交给月光</h2><p>写下一句话，让它化作一盏灯，慢慢升到月亮身边。</p><form id="wish-form"><label for="wish-input">你的心愿</label><textarea id="wish-input" maxlength="42" rows="3" placeholder="愿家人平安，愿所行皆有光……" required></textarea><div class="wish-form-footer"><span id="wish-count">0 / 42</span><button type="submit">点亮祈愿灯 ↗</button></div></form><div id="wish-log" class="wish-log" aria-live="polite"></div></div></section>
+    <footer><div class="caption"><span class="dot"></span> 南京大学 · 北大楼 <small>拖动环绕 / 滚轮缩放 / 轻点灯笼与月亮</small></div><div class="controls"><button id="mood" aria-pressed="true">◉ 灯火夜景</button><button id="reset">↺ 归位</button><button id="wish">写下心愿 ↗</button></div></footer>
+  </main>
+  <script>
+    if (location.protocol === 'file:') {
+      document.documentElement.classList.add('file-mode');
+      document.querySelector('#file-run-guide').hidden = false;
+    } else {
+      const app = document.createElement('script');
+      app.type = 'module';
+      app.src = 'app.js';
+      document.body.append(app);
+    }
+  </script>
+</body>
+</html>
